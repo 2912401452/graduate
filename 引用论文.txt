@@ -1,0 +1,19 @@
+万方
+http://www.wanfangdata.com.cn/search/searchList.do?searchType=all&showType=&pageSize=&searchWord=webgl&isTriggerTag=
+
+
+[1]王星捷 李春花 基于WebGL的三维数字城市的设计与实现   - 《计算机技术与发展》  CSTPCD  - 2019年4期
+
+[2] 马炅妤 李平 周启 李维庆 WebGL在线动态地图服务框架设计  - 《测绘通报》  CSTPCD 北大核心  - 2019年1期
+
+[3]王星捷 卫守林  WebGL技术的三维WebGIS平台研究与应用  - 《遥感信息》  CSTPCD 北大核心  - 2019年3期
+
+[4]Ahyun Lee Insung Jang 
+Implementation of an open platform for 3D spatial information based on WebGL  - 《ETRI Journal》   - 2019年 3期
+
+中国知网
+[5]https://kns.cnki.net/kns/brief/default_result.aspx
+Xiaoping Zhou;;Jia Wang;;Ming Guo;;Zhe Gao
+	Cross-platform online visualization system for open BIM based on WebGL
+	Multimedia Tools and Applications	2019-09-20 
+	数据库 Springer journal
