@@ -1,0 +1,22 @@
+简介
+1.WebGL是一种3D绘图标准，这种绘图技术标准允许把JavaScript和OpenGL ES 2.0结合在一起，通过增加OpenGL ES 2.0的
+一个JavaScript绑定，WebGL可以为HTML5 Canvas提供硬件3D加速渲染，这样Web开发人员就可以借助系统显卡来在浏览器里
+更流畅地展示3D场景和模型了，还能创建复杂的导航和数据视觉化。显然，WebGL技术标准免去了开发网页专用渲染插件的麻烦，
+可被用于创建具有复杂3D结构的网站页面，甚至可以用来设计3D网页游戏等等。
+来源
+2.WebGL - 为互联网生而的OpenGL ES 2.0
+WebGL 是免授权费的，跨平台的应用程序接口API，它将OpenGL ES 2.0作为在HTML网页内的3D绘图环境，作为低级别文档对象
+模型接口开放。它使用OpenGL渲染语言GLSL ES，并可被整洁地与其他3D内容上层或下层的网页内容捆绑。它是使用JavaScript
+编程开发语言开发适合动态3D网页应用的理想工具，并已被主流互联网浏览器集成。webGL来自Khronos Group
+
+来源
+3.Khronos Group
+Khronos Group团队成立于 2000 年 1 月，由包括 3Dlabs, ATI, Discreet, Evans & Sutherland, Intel, Nvidia, SGI 和
+ Sun Microsystems 在内的多家国际知名多媒体行业领导者创立，致力于发展开放标准的应用程序接口 API ，以实现在多种平台
+和终端设备上的富媒体创作、加速和回放。包括各方面的技术
+
+Khronos Group 网站
+你可以在Khronos Group网站上找到很多资料。它的官方github站上也有很多说明、测试东西。official github
+————————————————
+版权声明：本文为CSDN博主「技道两进」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/lzwdlut/article/details/51919600
