@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../src/three.js"></script>
+    <script src="../src/controller/OrbitControls.js"></script>
+    <script src="../src/controller/TransformControls.js"></script>
+    <style>
+        body{
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div style="position: absolute;top: 50px;left: 50px;">
+        <span style="border: 1px solid;margin: 10px;" onclick="changeMode('translate')">translate</span>
+        <span style="border: 1px solid;margin: 10px;" onclick="changeMode('rotate')">rotate</span>
+        <span style="border: 1px solid;margin: 10px;" onclick="changeMode('scale')">scale</span>
+        <span style="border: 1px solid;margin: 10px;" onclick="traggle()">traggle</span>
+    </div>
+    <div id="Stats-output"></div>
+    <div id="WebGL-output"></div>
+</body>
+<script>
+    var transformControls
+    var controller
+    window.onload = function(){
+        let scene = new THREE.Scene()
+        let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        let renderer = new THREE.WebGLRenderer({
+            antialias:true, // 开启抗锯齿处理
+            alpha:true
+        })
+        renderer.setClearColor(new THREE.Color(0xEEEEEE))
+        renderer.setSize(window.innerWidth,window.innerHeight)
+        renderer.shadowMap.enabled = true
+
+        controller = new THREE.OrbitControls( camera, renderer.domElement )
+        camera.position.x = -30
+        camera.position.y = 40
+        camera.position.z = 30
+        camera.lookAt(scene.position)
+
+
+        var grid = new THREE.GridHelper( 30, 30, 0x444444, 0x888888 );
+	    scene.add( grid );
+
+        var box =  new THREE.Mesh( new THREE.BoxGeometry(10,10,10), new THREE.MeshNormalMaterial() );
+        scene.add(box)
+
+        transformControls = new THREE.TransformControls(camera, renderer.domElement);
+        transformControls.setMode('translate')
+        transformControls.attach( box )
+        transformControls.visible = true
+        scene.add(transformControls)
+
+        document.getElementById('WebGL-output').appendChild(renderer.domElement)
+        
+        renderScene()
+        function renderScene(){
+            renderer.render(scene,camera)
+            requestAnimationFrame(renderScene)
+        }
+        window.onresize = onResize
+        function onResize(){
+            camera.aspect = window.innerWidth / window.innerHeight
+            camera.updateProjectionMatrix()
+            renderer.setSize(window.innerWidth,window.innerHeight)
+        }    
+    }
+    function changeMode(mode) {
+        transformControls.setMode( mode )
+    }
+    function traggle(){
+        controller.enabled = !controller.enabled
+    }
+</script>
+</html>
