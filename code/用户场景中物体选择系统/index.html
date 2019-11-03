@@ -29,7 +29,7 @@
             antialias:true, // 开启抗锯齿处理
             alpha:true
         })
-        renderer.setClearColor(new THREE.Color(0xffff00))
+        renderer.setClearColor(new THREE.Color(0xeeeeee))
         renderer.setSize(window.innerWidth,window.innerHeight)
         renderer.shadowMap.enabled = true
         
@@ -44,39 +44,75 @@
         var raycaster = new THREE.Raycaster();
         var mouse = new THREE.Vector2();
 
-        var currentSceneMeshs = {}
+        var currentSelectedMeshs = []
+        var canBeSelectedMeshes = []
+        var mode = 'single' // mul
+
+        var normalMaterial = new THREE.MeshNormalMaterial()
+        var basicMaterial = new THREE.MeshBasicMaterial({color: 'red'})
+        
+        var cubeCount = 20;
+        var size = 6
+        var isMultiply = false
 
         var grid = new THREE.GridHelper( 30, 30, 0x444444, 0x888888 );
         scene.add( grid );
-        
-        var normalMaterial = new THREE.MeshNormalMaterial()
-        var basicMaterial = new THREE.MeshBasicMaterial({color: 'red'})
 
-        var box =  new THREE.Mesh( new THREE.BoxGeometry(5,5,5), normalMaterial );
-        box.position.x = -10
-        box.isSelected = false
-        scene.add(box)
-
-        var box2 =  new THREE.Mesh( new THREE.BoxGeometry(5,5,5), normalMaterial );
-        box2.position.x = 10
-        box2.isSelected = false
-        scene.add(box2)
+        for(var i=0;i<cubeCount;i++){
+            var geo = new THREE.BoxGeometry(Math.random()*size,Math.random()*size,Math.random()*size)
+            var cube = new THREE.Mesh(geo,normalMaterial)
+            cube.position.x = -15 + Math.random()*30
+            cube.position.z = -15 + Math.random()*30
+            cube.isSelected = false
+            scene.add(cube)
+            canBeSelectedMeshes.push(cube)
+        }
         
-        renderer.domElement.addEventListener('click',function(e){
+       document.onkeydown = function(edown){
+            isMultiply = !isMultiply
+       }
+        
+        renderer.domElement.onmousedown = function(e){
             var coords = tranformMouseCoord(e.clientX, e.clientY, renderer.domElement);
-            var meshes =  [box, box2];
-        
-            var intersects = getSelectedMeshes(coords, camera, meshes);
-            intersects.forEach(item=>{
-                if(item.object.isSelected){
+            var intersects = getSelectedMeshes(coords, camera, canBeSelectedMeshes);
+            var moveFlag = false
+            if(intersects.length > 0){
+                
+                var item = intersects[0]
+                if(item.object.isSelected){//selected
                     item.object.material = normalMaterial
-                }else{
+                }else{  // not selected
+                    if(!isMultiply){ // multiply
+                        currentSelectedMeshs.forEach(item=>{
+                            item.isSelected = false
+                            item.material = normalMaterial
+                            item.needsUpdate = true  
+                        })
+                        currentSelectedMeshs = []
+                    }
                     item.object.material = basicMaterial
+                    currentSelectedMeshs.push(item.object)
                 }
                 item.object.isSelected = !item.object.isSelected;
-                item.object.needsUpdate = true
-            })
-        })
+                item.object.needsUpdate = true 
+            }
+
+            renderer.domElement.onmousemove = function(e){
+                renderer.domElement.onmouseup = function(e){
+                }
+            }
+            renderer.domElement.onmouseup = function(e){
+                if(intersects.length == 0){
+                    currentSelectedMeshs.forEach(item=>{
+                        item.isSelected = false
+                        item.material = normalMaterial
+                        item.needsUpdate = true  
+                    })
+                    currentSelectedMeshs = []
+                }
+            }
+            
+        }
 
         renderScene()
         function renderScene(){
