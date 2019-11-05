@@ -49,7 +49,6 @@
 
         var currentSelectedMeshs = []
         var canBeSelectedMeshes = []
-        var mode = 'single' // mul
 
         var normalMaterial = new THREE.MeshNormalMaterial()
         var basicMaterial = new THREE.MeshBasicMaterial({color: 'red'})
@@ -81,19 +80,26 @@
             var intersects = getSelectedMeshes(coords, camera, canBeSelectedMeshes);
             var moveFlag = false
             if(intersects.length > 0){
-                
+                if(!isMultiply){ // multiply
+                    currentSelectedMeshs.forEach(item=>{
+                        item.isSelected = false
+                        item.material = normalMaterial
+                        item.needsUpdate = true  
+                    })
+                    currentSelectedMeshs = []
+                }
                 var item = intersects[0]
                 if(item.object.isSelected){//selected
                     item.object.material = normalMaterial
                 }else{  // not selected
-                    if(!isMultiply){ // multiply
-                        currentSelectedMeshs.forEach(item=>{
-                            item.isSelected = false
-                            item.material = normalMaterial
-                            item.needsUpdate = true  
-                        })
-                        currentSelectedMeshs = []
-                    }
+                    // if(!isMultiply){ // multiply
+                    //     currentSelectedMeshs.forEach(item=>{
+                    //         item.isSelected = false
+                    //         item.material = normalMaterial
+                    //         item.needsUpdate = true  
+                    //     })
+                    //     currentSelectedMeshs = []
+                    // }
                     item.object.material = basicMaterial
                     currentSelectedMeshs.push(item.object)
                 }
