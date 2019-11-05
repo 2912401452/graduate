@@ -32,7 +32,7 @@
         renderer.setClearColor(new THREE.Color(0xffffff))
         renderer.setSize(window.innerWidth,window.innerHeight)
         renderer.shadowMap.enabled = true
-        
+        let domElement = renderer.domElement
         document.getElementById('WebGL-output').appendChild(renderer.domElement)
         
         var controller = new THREE.OrbitControls( camera, renderer.domElement )
@@ -55,12 +55,10 @@
         var box =  new THREE.Mesh( new THREE.BoxGeometry(5,5,5), normalMaterial );
         box.position.x = -10
         box.isSelected = false
-        // scene.add(box)
 
         var box2 =  new THREE.Mesh( new THREE.BoxGeometry(5,5,5), normalMaterial );
         box2.position.x = 10
         box2.isSelected = false
-        // scene.add(box2)
 
         var group = new THREE.Group()
         group.add(box)
@@ -71,42 +69,43 @@
         sphere.position.z = 10
         sphere.isSelected = false
 
+        var sphere2 = new THREE.Mesh(new THREE.SphereBufferGeometry(5,16,16), normalMaterial);
+        sphere2.position.x = 10
+        sphere2.position.z = 10
+        sphere2.isSelected = false
+        sphere2.userData.isParent = true
+        scene.add(sphere2)
+
         var group2 = new THREE.Group()
         group2.add(sphere)
         group2.add(group)
-
+        group2.userData.isParent = true
         scene.add(group2)
         
-        // console.log(group)
         
-        renderer.domElement.addEventListener('click',function(e){
-            var coords = tranformMouseCoord(e.clientX, e.clientY, renderer.domElement);
-            var meshes =  [box, box2, sphere];
-            // var meshes = [group,box]
-        
+        domElement.onclick = function(e){
+            var coords = tranformMouseCoord(e.clientX, e.clientY, domElement);
+            var meshes =  [box, box2, sphere, sphere2];
             var intersects = getSelectedMeshes(coords, camera, meshes);
-            var line = null
-            intersects.forEach(item=>{
-                if(item.object.isSelected){
-                    item.object.material = normalMaterial
-                    scene.remove(item.object.userData.helper)
-                }else{
-                    item.object.material = basicMaterial
-                    var parent = getParent(item.object)
-                    console.log(parent)
+
+            if (intersects.length >0){
+                var selectedMesh = intersects[0].object
+
+                var parent = getParent(selectedMesh)
+                if(parent.isSelected){
+                    scene.remove(parent.userData.box3Hepler)
+                    parent.userData.box3Hepler = null
+                }else {
                     var line = new THREE.BoxHelper(parent, new THREE.Color(0xFF3030))
-                    item.object.userData = {
-                        helper: line
-                    }
+                    parent.userData.box3Hepler = line
                     scene.add(line)
                 }
-                item.object.isSelected = !item.object.isSelected;
-                item.object.needsUpdate = true
-            })
-        })
+                parent.isSelected = !parent.isSelected;
+            }
+        }
 
         function getParent(item){
-            if(item.parent!==null&&item.parent.type !== 'Scene'){
+            if(item.userData.isParent !== true){
                 return getParent(item.parent)
             }
             return item

@@ -29,8 +29,9 @@
         renderer.setClearColor(new THREE.Color(0xEEEEEE))
         renderer.setSize(window.innerWidth,window.innerHeight)
         renderer.shadowMap.enabled = true
+        let domElement = renderer.domElement
 
-        var controller = new THREE.OrbitControls( camera, renderer.domElement )
+        var controller = new THREE.OrbitControls( camera, domElement )
         camera.position.x = -30
         camera.position.y = 40
         camera.position.z = 30
@@ -41,7 +42,7 @@
         var grid = new THREE.GridHelper( 30, 30, 0x444444, 0x888888 );
 	    scene.add( grid );
 
-        document.getElementById('WebGL-output').appendChild(renderer.domElement)
+        document.getElementById('WebGL-output').appendChild(domElement)
         
         renderScene()
         function renderScene(){

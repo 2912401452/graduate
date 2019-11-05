@@ -8,7 +8,7 @@ THREE.TransformControls = function ( camera, domElement ) {
 
 	domElement = ( domElement !== undefined ) ? domElement : document;
 
-	this.visible = false;
+	this.visible = false;	// 控制器在没有绑定网格时默认不可见
 
 	var _gizmo = new THREE.TransformControlsGizmo();
 	this.add( _gizmo );
@@ -481,7 +481,7 @@ THREE.TransformControls = function ( camera, domElement ) {
 	};
 
 	this.pointerUp = function( pointer ) {
-		console.log('-----')
+		// console.log('-----')
 		if ( pointer.button !== undefined && pointer.button !== 0 ) return;
 
 		if ( this.dragging && ( this.axis !== null ) ) {

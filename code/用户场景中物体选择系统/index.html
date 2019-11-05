@@ -20,6 +20,9 @@
 <body>
     <div id="Stats-output"></div>
     <div id="WebGL-output"></div>
+    <div id="sign" style="position: absolute;top: 0;left: 0;margin: 10px;border: 1px solid;border-radius:10px;padding: 10px;">
+        single(按ctrl键切换)
+    </div>
 </body>
 <script>
     window.onload = function(){
@@ -70,6 +73,7 @@
         
        document.onkeydown = function(edown){
             isMultiply = !isMultiply
+            document.getElementById('sign').innerText = isMultiply?'multipty':'single'
        }
         
         renderer.domElement.onmousedown = function(e){
