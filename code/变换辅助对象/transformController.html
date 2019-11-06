@@ -48,6 +48,8 @@
         camera.position.z = 30
         camera.lookAt(scene.position)
 
+        var currentSelectedMeshs = []
+        var isMultiply = false
         var normalMaterial = new THREE.MeshNormalMaterial()
         var basicMaterial = new THREE.MeshBasicMaterial({color: 'red'})
 
@@ -92,6 +94,9 @@
 
         document.getElementById('WebGL-output').appendChild(renderer.domElement)
         
+        document.onkeydown = function(edown){
+            isMultiply = !isMultiply
+        }
 
         domElement.onclick = function(e){
             var coords = tranformMouseCoord(e.clientX, e.clientY, domElement);
@@ -102,21 +107,57 @@
                 var selectedMesh = intersects[0].object
                 var parent = getParent(selectedMesh)
 
-                controller.enabled = false
-                transformControls.attach( parent )
+                // controller.enabled = false
+                // transformControls.attach( parent )
 
                 if(parent.isSelected){
-                    scene.remove(parent.userData.box3Hepler)
-                    parent.userData.box3Hepler = null
+                    if(!isMultiply){ // multiply
+                        currentSelectedMeshs.forEach(item=>{
+                            item.isSelected = false
+                            scene.remove(item.userData.box3Hepler)
+                            item.userData.box3Hepler = null
+                        })
+                        currentSelectedMeshs = []
+                    }else{
+                        parent.isSelected = false
+                        scene.remove(parent.userData.box3Hepler)
+                        parent.userData.box3Hepler = null
+                        currentSelectedMeshs = currentSelectedMeshs.filter(item=>item.uuid !== parent.uuid)
+                    }
+                    transformControls.detach()
+                    controller.enabled = true
+                    // scene.remove(parent.userData.box3Hepler)
+                    // parent.userData.box3Hepler = null
                 }else {
+                    if(!isMultiply){ // multiply
+                        currentSelectedMeshs.forEach(item=>{
+                            item.isSelected = false
+                            scene.remove(item.userData.box3Hepler)
+                            item.userData.box3Hepler = null
+                        })
+                        currentSelectedMeshs = []
+                    }
+                    currentSelectedMeshs.push(parent)
+                    parent.isSelected = true
                     var line = new THREE.BoxHelper(parent, new THREE.Color(0xFF3030))
                     parent.userData.box3Hepler = line
                     scene.add(line)
+                    controller.enabled = false
+                    transformControls.attach( parent )
+                    // var line = new THREE.BoxHelper(parent, new THREE.Color(0xFF3030))
+                    // parent.userData.box3Hepler = line
+                    // scene.add(line)
                 }
-                parent.isSelected = !parent.isSelected;
+                // parent.isSelected = !parent.isSelected;
             }else{
                 transformControls.detach()
                 controller.enabled = true
+                currentSelectedMeshs.forEach(item=>{
+                    item.isSelected = false
+                    scene.remove(item.userData.box3Hepler)
+                    item.userData.box3Hepler = null
+                })
+                currentSelectedMeshs = []
             }
         }
 
