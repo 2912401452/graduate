@@ -7,6 +7,9 @@
     <title>Document</title>
     <script src="../src/three.js"></script>
     <script src="../src/controller/OrbitControls.js"></script>
+
+    <script src="../src/common/math.js"></script>
+    <script src="../src/common/utils.js"></script>
     <style>
         body{
             margin: 0;
@@ -37,13 +40,28 @@
         camera.position.z = 30
         camera.lookAt(scene.position)
 
-       
 
         var grid = new THREE.GridHelper( 30, 30, 0x444444, 0x888888 );
-	    scene.add( grid );
+        scene.add( grid );
+        
+        var normalMaterial = new THREE.MeshNormalMaterial()
+        var cubeCount = 10, size = 10, canBeSelectedMeshes = []
+        for(var i=0;i<cubeCount;i++){
+            var geo = new THREE.BoxGeometry(Math.random()*size,Math.random()*size,Math.random()*size)
+            var cube = new THREE.Mesh(geo,normalMaterial)
+            cube.position.x = -15 + Math.random()*30
+            cube.position.z = -15 + Math.random()*30
+            cube.isSelected = false
+            canBeSelectedMeshes.push(cube)
+            scene.add(cube)
+        }
 
         document.getElementById('WebGL-output').appendChild(domElement)
-        
+        domElement.onclick = function(e){
+            var coords = tranformMouseCoord(e.clientX, e.clientY, renderer.domElement);
+            var intersects = getSelectedMeshes(coords, camera, canBeSelectedMeshes);
+            console.log(intersects[0]);
+        }
         renderScene()
         function renderScene(){
             renderer.render(scene,camera)

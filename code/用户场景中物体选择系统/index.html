@@ -90,6 +90,14 @@
                 }
                 var item = intersects[0]
                 if(item.object.isSelected){//selected
+                    if(!isMultiply){ // multiply
+                        currentSelectedMeshs.forEach(item=>{
+                            item.isSelected = false
+                            item.material = normalMaterial
+                            item.needsUpdate = true  
+                        })
+                        currentSelectedMeshs = []
+                    }
                     item.object.material = normalMaterial
                 }else{  // not selected
                     // if(!isMultiply){ // multiply
