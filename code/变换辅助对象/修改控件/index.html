@@ -56,10 +56,17 @@
         var grid = new THREE.GridHelper( 30, 30, 0x444444, 0x888888 );
 	    scene.add( grid );
 
-        var sphere2 = new THREE.Mesh(new THREE.SphereBufferGeometry(5,16,16), normalMaterial);
-        sphere2.isSelected = false
-        sphere2.userData.isParent = true
-        scene.add(sphere2)
+        // var sphere2 = new THREE.Mesh(new THREE.SphereBufferGeometry(5,16,16), normalMaterial);
+        // sphere2.isSelected = false
+        // sphere2.userData.isParent = true
+        // scene.add(sphere2)
+
+        var box = new THREE.Mesh(new THREE.BoxGeometry(5,5,5),normalMaterial)
+        box.isSelected = false
+        box.userData.isParent = true
+        box.rotation.y = Math.PI / 4
+        box.rotation.x = Math.PI / 4
+        scene.add(box)
 
 
         transformControls = new THREE.TransformControls(camera, domElement);
@@ -74,7 +81,7 @@
 
         domElement.onclick = function(e){
             var coords = tranformMouseCoord(e.clientX, e.clientY, domElement);
-            var meshes =  [sphere2];
+            var meshes =  [box];
             var intersects = getSelectedMeshes(coords, camera, meshes);
             
             if (intersects.length >0){

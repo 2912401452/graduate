@@ -100,15 +100,15 @@ THREE.TransformControls = function ( camera, domElement ) {
 
 	{
 
-		domElement.addEventListener( "mousedown", onPointerDown, false );
-		domElement.addEventListener( "touchstart", onPointerDown, false );
-		domElement.addEventListener( "mousemove", onPointerHover, false );
-		domElement.addEventListener( "touchmove", onPointerHover, false );
-		domElement.addEventListener( "touchmove", onPointerMove, false );
-		document.addEventListener( "mouseup", onPointerUp, false );
-		domElement.addEventListener( "touchend", onPointerUp, false );
+		domElement.addEventListener( "mousedown"  , onPointerDown, false );
+		domElement.addEventListener( "touchstart" , onPointerDown, false );
+		domElement.addEventListener( "mousemove"  , onPointerHover, false );
+		domElement.addEventListener( "touchmove"  , onPointerHover, false );
+		domElement.addEventListener( "touchmove"  , onPointerMove, false );
+		document.addEventListener(   "mouseup"    , onPointerUp, false );
+		domElement.addEventListener( "touchend"   , onPointerUp, false );
 		domElement.addEventListener( "touchcancel", onPointerUp, false );
-		domElement.addEventListener( "touchleave", onPointerUp, false );
+		domElement.addEventListener( "touchleave" , onPointerUp, false );
 		domElement.addEventListener( "contextmenu", onContext, false );
 
 	}
@@ -214,12 +214,13 @@ THREE.TransformControls = function ( camera, domElement ) {
 		if ( this.object === undefined || this.dragging === true || ( pointer.button !== undefined && pointer.button !== 0 ) ) return;
 
 		ray.setFromCamera( pointer, this.camera );
-
+		// console.log(_gizmo.picker[ this.mode ].children)
 		var intersect = ray.intersectObjects( _gizmo.picker[ this.mode ].children, true )[ 0 ] || false;
 
 		if ( intersect ) {
 
 			this.axis = intersect.object.name;
+			// console.log(this.axis)
 
 		} else {
 
@@ -701,6 +702,15 @@ THREE.TransformControlsGizmo = function () {
 	var matLineYellowTransparent = matLineYellow.clone();
 	matLineYellowTransparent.opacity = 0.25;
 
+	// ---
+	var planeXMat = matRed.clone()
+	planeXMat.opacity = 0.05;
+	var planeYMat = matGreen.clone()
+	planeYMat.opacity = 0.05;
+	var planeZMat = matBlue.clone()
+	planeZMat.opacity = 0.05;
+	// ---
+
 	// reusable geometry
 
 	var arrowGeometry = new THREE.CylinderBufferGeometry( 0, 0.05, 0.2, 12, 1, false);
@@ -826,14 +836,17 @@ THREE.TransformControlsGizmo = function () {
 		X: [
 			[ new THREE.Line( CircleGeometry( 1, 0.5 ), matLineRed ) ],
 			[ new THREE.Mesh( new THREE.OctahedronBufferGeometry( 0.04, 0 ), matRed ), [ 0, 0, 0.99 ], null, [ 1, 3, 1 ] ],
+			[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.95, 0.95 ), planeXMat ), null, [ 0,  -Math.PI / 2, 0 ], [ 1.5, 1.5, 1.5 ] ]
 		],
 		Y: [
 			[ new THREE.Line( CircleGeometry( 1, 0.5 ), matLineGreen ), null, [ 0, 0, -Math.PI / 2 ] ],
 			[ new THREE.Mesh( new THREE.OctahedronBufferGeometry( 0.04, 0 ), matGreen ), [ 0, 0, 0.99 ], null, [ 3, 1, 1 ] ],
+			[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.95, 0.95 ), planeYMat ), null, [ -Math.PI / 2,  0, 0 ], [ 1.5, 1.5, 1.5 ] ]
 		],
 		Z: [
 			[ new THREE.Line( CircleGeometry( 1, 0.5 ), matLineBlue ), null, [ 0, Math.PI / 2, 0 ] ],
 			[ new THREE.Mesh( new THREE.OctahedronBufferGeometry( 0.04, 0 ), matBlue ), [ 0.99, 0, 0 ], null, [ 1, 3, 1 ] ],
+			[ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.95, 0.95 ), planeZMat ), null, [ 0, 0, -Math.PI / 2 ], [ 1.5, 1.5, 1.5 ] ]
 		],
 		E: [
 			[ new THREE.Line( CircleGeometry( 1.25, 1 ), matLineYellowTransparent ), null, [ 0, Math.PI / 2, 0 ] ],
@@ -1020,8 +1033,12 @@ THREE.TransformControlsGizmo = function () {
 	// Gizmo creation
 
 	this.gizmo = {};
-	this.picker = {};
-	this.helper = {};
+	this.picker = {};	// 辅助用户进行拾取控制操作
+	this.helper = {};	// 辅助线
+
+	// ----
+	this.helperPlane = {}
+	// ----
 
 	this.add( this.gizmo[ "translate" ] = setupGizmo( gizmoTranslate ) );
 	this.add( this.gizmo[ "rotate" ] = setupGizmo( gizmoRotate ) );
@@ -1033,11 +1050,36 @@ THREE.TransformControlsGizmo = function () {
 	this.add( this.helper[ "rotate" ] = setupGizmo( helperRotate ) );
 	this.add( this.helper[ "scale" ] = setupGizmo( helperScale ) );
 
+	// ----
+	// console.log(this.gizmo[ "rotate" ])
+	// this.gizmo[ "rotate" ].visible = false
+	// console.log(this.gizmo.rotate.children.filter(item=>item.type == 'Mesh' && item.name !== "E"))
+	// var plane = this.gizmo.rotate.children.filter(item=>item.type == 'Mesh' && item.name !== "E")
+	// // console.log(plane)
+	// // plane[1].visible = false
+	// // plane[3].visible = false
+	// // plane[5].visible = false
+	// plane.forEach(item=>{
+	// 	console.log(item)
+	// 	item.visible = false
+	// })
+	// var testPlane = new THREE.PlaneBufferGeometry(5,5)
+	// var testMat = gizmoMaterial.clone()
+	// testMat.color.set( 0xffff00 )
+	// this.helperPlane["rotate"] = new THREE.Mesh(testPlane, testMat)
+	// this.helperPlane["rotate"].visible = true
+	// this.add(this.helperPlane["rotate"])
+	// ----
+
 	// Pickers should be hidden always
 
 	this.picker[ "translate" ].visible = false;
 	this.picker[ "rotate" ].visible = false;
 	this.picker[ "scale" ].visible = false;
+
+	// this.picker[ "translate" ].visible = true;
+	// this.picker[ "rotate" ].visible = true;
+	// this.picker[ "scale" ].visible = true;
 
 	// updateMatrixWorld will update transformations and appearance of individual handles
 
@@ -1055,10 +1097,25 @@ THREE.TransformControlsGizmo = function () {
 		this.gizmo[ "rotate" ].visible = this.mode === "rotate";
 		this.gizmo[ "scale" ].visible = this.mode === "scale";
 
+		// ---
+		// var plane = this.gizmo[ "rotate" ].children.filter(item=>item.type == 'Mesh' && item.name !== "E")
+		// // console.log(plane)
+		// plane[1].visible = false
+		// plane[3].visible = false
+		// plane[5].visible = false
+		// ---
+
 		this.helper[ "translate" ].visible = this.mode === "translate";
 		this.helper[ "rotate" ].visible = this.mode === "rotate";
 		this.helper[ "scale" ].visible = this.mode === "scale";
 
+		// this.gizmo[ "translate" ].visible = false
+		// this.gizmo[ "rotate" ].visible = false
+		// this.gizmo[ "scale" ].visible = false
+
+		// this.helper[ "translate" ].visible = false
+		// this.helper[ "rotate" ].visible = false
+		// this.helper[ "scale" ].visible = false
 
 		var handles = [];
 		handles = handles.concat( this.picker[ this.mode ].children );
