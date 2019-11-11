@@ -7,7 +7,7 @@
     <title>Document</title>
     <script src="../../src/three.js"></script>
     <script src="../../src/controller/OrbitControls.js"></script>
-    <script src="./TransformControls.js"></script>
+    <script src="./HorizialController.js"></script>
 
     <script src="../../src/common/math.js"></script>
     <script src="../../src/common/utils.js"></script>
@@ -69,7 +69,7 @@
         scene.add(box)
 
 
-        transformControls = new THREE.TransformControls(camera, domElement);
+        transformControls = new THREE.HorizialController(camera, domElement);
         transformControls.setMode('translate')
         scene.add(transformControls)
 

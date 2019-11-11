@@ -1,0 +1,27 @@
+目前，webgl已经进入了2.0的时代，为方便开发更加炫酷，性能更高的web三维应用提供了更多的新特性。以下是列举的一些新特性：
+OPENGL ES着色器语言3.0
+vertex array objects (VAOs)
+三维纹理
+multiple render target（MRT）
+Texture access in vertex shaders
+浮点数纹理
+深度纹理
+texelFetch
+采样器对象
+一直缓冲对象
+同步对象
+查询对象
+变换反馈对象
+Hardware Instancing
+immutable textures
+EXT_color_buffer_float
+Standard Derivatives
+Instanced Drawing
+Depth Textures (WEBGL_depth_texture)
+UNSIGNED_INT indices (OES_element_index_uint)
+Setting gl_FragDepth(EXT_frag_depth)
+Blend Equation MIN/MAX (EXT_blend_minmax)
+Direct texture LOD access (EXT_shader_texture_lod)
+Multiple Draw Buffers (WEBGL_draw_buffers)
+Non-Power of 2 Texture Support
+Floating Point Framebuffer Attachments

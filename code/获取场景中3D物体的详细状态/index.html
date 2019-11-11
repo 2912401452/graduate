@@ -48,10 +48,11 @@
         var cubeCount = 10, size = 10, canBeSelectedMeshes = []
         for(var i=0;i<cubeCount;i++){
             var geo = new THREE.BoxGeometry(Math.random()*size,Math.random()*size,Math.random()*size)
-            var cube = new THREE.Mesh(geo,normalMaterial)
+            var cube = new THREE.Mesh(geo, normalMaterial)
             cube.position.x = -15 + Math.random()*30
             cube.position.z = -15 + Math.random()*30
             cube.isSelected = false
+            cube.isParent = true
             canBeSelectedMeshes.push(cube)
             scene.add(cube)
         }
@@ -60,7 +61,11 @@
         domElement.onclick = function(e){
             var coords = tranformMouseCoord(e.clientX, e.clientY, renderer.domElement);
             var intersects = getSelectedMeshes(coords, camera, canBeSelectedMeshes);
-            console.log(intersects[0]);
+            console.log(intersects[0].object);
+            if(intersects.length > 0){
+                var obj = intersects[0]
+                // console.log(obj.getW)
+            }
         }
         renderScene()
         function renderScene(){
