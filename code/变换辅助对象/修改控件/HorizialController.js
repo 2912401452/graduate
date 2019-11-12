@@ -702,16 +702,35 @@ THREE.HorizialControllerGizmo = function () {
 	var matLineYellowTransparent = matLineYellow.clone();
 	matLineYellowTransparent.opacity = 0.25;
 
-	// ---
-	var planeXMat = matRed.clone()
-	planeXMat.opacity = 0.05;
-	var planeYMat = matGreen.clone()
-	planeYMat.opacity = 0.05;
-	var planeZMat = matBlue.clone()
-	planeZMat.opacity = 0.05;
-	// ---
-
 	// reusable geometry
+
+	var vertices = [
+		new THREE.Vector3(-0.05,0,0),
+		new THREE.Vector3(0.05,0,0),
+		new THREE.Vector3(-0.05,0.4,0),
+		new THREE.Vector3(0.05,0.4,0),
+		new THREE.Vector3(-0.05,0.2,0.5),
+		new THREE.Vector3(0.05,0.2,0.5)
+	];
+
+	var faces = [
+		new THREE.Face3(0,2,1),
+		new THREE.Face3(1,2,3),
+		
+		new THREE.Face3(0,5,4),
+		new THREE.Face3(0,1,5),
+
+		new THREE.Face3(4,5,3),
+		new THREE.Face3(4,3,2),
+
+		new THREE.Face3(1,3,5),
+		new THREE.Face3(0,4,2)
+	];
+
+	var arrowGeom = new THREE.Geometry();
+	arrowGeom.vertices = vertices;
+	arrowGeom.faces = faces;
+	arrowGeom.computeFaceNormals();//计算法向量 这决定了对光做出的反应
 
 	var arrowGeometry = new THREE.CylinderBufferGeometry( 0, 0.05, 0.2, 12, 1, false);
 
@@ -719,6 +738,14 @@ THREE.HorizialControllerGizmo = function () {
 
 	var lineGeometry = new THREE.BufferGeometry( );
 	lineGeometry.addAttribute('position', new THREE.Float32BufferAttribute( [ 0, 0, 0,	1, 0, 0 ], 3 ) );
+
+	var xAxisGeo = new THREE.BoxBufferGeometry(0.8,0.1,0.2)
+
+
+	// var geometry = new THREE.RingBufferGeometry( 1, 5, 32 );
+	// var material = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
+	// var mesh = new THREE.Mesh( geometry, material );
+	// scene.add( mesh );
 
 	var CircleGeometry = function( radius, arc ) {
 
@@ -753,62 +780,42 @@ THREE.HorizialControllerGizmo = function () {
 
 	var gizmoTranslate = {
 		X: [
-			[ new THREE.Mesh( arrowGeometry, matRed ), [ 1, 0, 0 ], [ 0, 0, -Math.PI / 2 ], null, 'fwd' ],
-			[ new THREE.Mesh( arrowGeometry, matRed ), [ 1, 0, 0 ], [ 0, 0, Math.PI / 2 ], null, 'bwd' ],
-			[ new THREE.Line( lineGeometry, matLineRed ) ]
+			[ new THREE.Mesh( arrowGeom, matRed ), [ -1.2, 0, 0.2 ], [ 0, -Math.PI / 2, Math.PI / 2 ] ],
+			[ new THREE.Mesh( arrowGeom, matRed ), [ 1.2, 0, 0.2 ], [ 0, Math.PI / 2, -Math.PI / 2 ] ],
+			[ new THREE.Mesh( xAxisGeo, matRed ), [ 0.8, 0, 0 ] ],
+			[ new THREE.Mesh( xAxisGeo, matRed ), [ -0.8, 0, 0] ]
 		],
-		Y: [
-			// [ new THREE.Mesh( arrowGeometry, matGreen ), [ 0, 1, 0 ], null, null, 'fwd' ],
-			// [ new THREE.Mesh( arrowGeometry, matGreen ), [ 0, 1, 0 ], [ Math.PI, 0, 0 ], null, 'bwd' ],
-			// [ new THREE.Line( lineGeometry, matLineGreen ), null, [ 0, 0, Math.PI / 2 ] ]
-		],
+		Y: [],
 		Z: [
-			[ new THREE.Mesh( arrowGeometry, matBlue ), [ 0, 0, 1 ], [ Math.PI / 2, 0, 0 ], null, 'fwd' ],
-			[ new THREE.Mesh( arrowGeometry, matBlue ), [ 0, 0, 1 ], [ -Math.PI / 2, 0, 0 ], null, 'bwd' ],
-			[ new THREE.Line( lineGeometry, matLineBlue ), null, [ 0, -Math.PI / 2, 0 ] ]
+			[ new THREE.Mesh( arrowGeom, matBlue ), [ 0.2, 0, 1.2 ], [ 0, 0, Math.PI / 2 ] ],
+			[ new THREE.Mesh( arrowGeom, matBlue ), [ -0.2, 0, -1.2 ], [ 0, Math.PI, Math.PI / 2 ] ],
+			[ new THREE.Mesh( xAxisGeo, matBlue ), [ 0, 0, 0.8 ], [ 0, -Math.PI / 2, 0 ] ],
+			[ new THREE.Mesh( xAxisGeo, matBlue ), [ 0, 0, -0.8 ], [ 0, -Math.PI / 2, 0 ] ]
 		],
-		XYZ: [
-			// [ new THREE.Mesh( new THREE.OctahedronBufferGeometry( 0.1, 0 ), matWhiteTransperent ), [ 0, 0, 0 ], [ 0, 0, 0 ] ]
-		],
-		XY: [
-			// [ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.295, 0.295 ), matYellowTransparent ), [ 0.15, 0.15, 0 ] ],
-			// [ new THREE.Line( lineGeometry, matLineYellow ), [ 0.18, 0.3, 0 ], null, [ 0.125, 1, 1 ] ],
-			// [ new THREE.Line( lineGeometry, matLineYellow ), [ 0.3, 0.18, 0 ], [ 0, 0, Math.PI / 2 ], [ 0.125, 1, 1 ] ]
-		],
-		YZ: [
-			// [ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.295, 0.295 ), matCyanTransparent ), [ 0, 0.15, 0.15 ], [ 0, Math.PI / 2, 0 ] ],
-			// [ new THREE.Line( lineGeometry, matLineCyan ), [ 0, 0.18, 0.3 ], [ 0, 0, Math.PI / 2 ], [ 0.125, 1, 1 ] ],
-			// [ new THREE.Line( lineGeometry, matLineCyan ), [ 0, 0.3, 0.18 ], [ 0, -Math.PI / 2, 0 ], [ 0.125, 1, 1 ] ]
-		],
-		XZ: [
-			// [ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.295, 0.295 ), matMagentaTransparent ), [ 0.15, 0, 0.15 ], [ -Math.PI / 2, 0, 0 ] ],
-			// [ new THREE.Line( lineGeometry, matLineMagenta ), [ 0.18, 0, 0.3 ], null, [ 0.125, 1, 1 ] ],
-			// [ new THREE.Line( lineGeometry, matLineMagenta ), [ 0.3, 0, 0.18 ], [ 0, -Math.PI / 2, 0 ], [ 0.125, 1, 1 ] ]
-		]
+		XYZ: [],
+		XY: [],
+		YZ: [],
+		XZ: []
 	};
 
 	var pickerTranslate = {
 		X: [
-			[ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.2, 0, 1, 4, 1, false ), matInvisible ), [ 0.6, 0, 0 ], [ 0, 0, -Math.PI / 2 ] ]
+			[ new THREE.Mesh( arrowGeom, matInvisible ), [ -1.2, 0, 0.2 ], [ 0, -Math.PI / 2, Math.PI / 2 ] ],
+			[ new THREE.Mesh( arrowGeom, matInvisible ), [ 1.2, 0, 0.2 ], [ 0, Math.PI / 2, -Math.PI / 2 ] ],
+			[ new THREE.Mesh( xAxisGeo, matInvisible ), [ 0.8, 0, 0 ] ],
+			[ new THREE.Mesh( xAxisGeo, matInvisible ), [ -0.8, 0, 0] ]
 		],
-		Y: [
-			// [ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.2, 0, 1, 4, 1, false ), matInvisible ), [ 0, 0.6, 0 ] ]
-		],
+		Y: [],
 		Z: [
-			[ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.2, 0, 1, 4, 1, false ), matInvisible ), [ 0, 0, 0.6 ], [ Math.PI / 2, 0, 0 ] ]
+			[ new THREE.Mesh( arrowGeom, matInvisible ), [ 0.2, 0, 1.2 ], [ 0, 0, Math.PI / 2 ] ],
+			[ new THREE.Mesh( arrowGeom, matInvisible ), [ -0.2, 0, -1.2 ], [ 0, Math.PI, Math.PI / 2 ] ],
+			[ new THREE.Mesh( xAxisGeo, matInvisible ), [ 0, 0, 0.8 ], [ 0, -Math.PI / 2, 0 ] ],
+			[ new THREE.Mesh( xAxisGeo, matInvisible ), [ 0, 0, -0.8 ], [ 0, -Math.PI / 2, 0 ] ]
 		],
-		XYZ: [
-			// [ new THREE.Mesh( new THREE.OctahedronBufferGeometry( 0.2, 0 ), matInvisible ) ]
-		],
-		XY: [
-			// [ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.4, 0.4 ), matInvisible ), [ 0.2, 0.2, 0 ] ]
-		],
-		YZ: [
-			// [ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.4, 0.4 ), matInvisible ), [ 0, 0.2, 0.2 ], [ 0, Math.PI / 2, 0 ] ]
-		],
-		XZ: [
-			// [ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.4, 0.4 ), matInvisible ), [ 0.2, 0, 0.2 ], [ -Math.PI / 2, 0, 0 ] ]
-		]
+		XYZ: [],
+		XY: [],
+		YZ: [],
+		XZ: []
 	};
 
 	var helperTranslate = {
@@ -833,31 +840,14 @@ THREE.HorizialControllerGizmo = function () {
 	};
 
 	var gizmoRotate = {
-		X: [
-			// [ new THREE.Line( CircleGeometry( 1, 0.5 ), matLineRed ) ],
-			// [ new THREE.Mesh( new THREE.OctahedronBufferGeometry( 0.04, 0 ), matRed ), [ 0, 0, 0.99 ], null, [ 1, 3, 1 ] ],
-			// [ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.95, 0.95 ), planeXMat ), null, [ 0,  -Math.PI / 2, 0 ], [ 1.5, 1.5, 1.5 ] ]
-		],
+		X: [],
 		Y: [
 			[ new THREE.Line( CircleGeometry( 1, 0.5 ), matLineGreen ), null, [ 0, 0, -Math.PI / 2 ] ],
-			[ new THREE.Mesh( new THREE.OctahedronBufferGeometry( 0.04, 0 ), matGreen ), [ 0, 0, 0.99 ], null, [ 3, 1, 1 ] ],
-			// [ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.95, 0.95 ), planeYMat ), null, [ -Math.PI / 2,  0, 0 ], [ 1.5, 1.5, 1.5 ] ]
+			[ new THREE.Mesh( new THREE.OctahedronBufferGeometry( 0.04, 0 ), matGreen ), [ 0, 0, 0.99 ], null, [ 3, 1, 1 ] ]
 		],
-		Z: [
-			// [ new THREE.Line( CircleGeometry( 1, 0.5 ), matLineBlue ), null, [ 0, Math.PI / 2, 0 ] ],
-			// [ new THREE.Mesh( new THREE.OctahedronBufferGeometry( 0.04, 0 ), matBlue ), [ 0.99, 0, 0 ], null, [ 1, 3, 1 ] ],
-			// [ new THREE.Mesh( new THREE.PlaneBufferGeometry( 0.95, 0.95 ), planeZMat ), null, [ 0, 0, -Math.PI / 2 ], [ 1.5, 1.5, 1.5 ] ]
-		],
-		E: [
-			// [ new THREE.Line( CircleGeometry( 1.25, 1 ), matLineYellowTransparent ), null, [ 0, Math.PI / 2, 0 ] ],
-			// [ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.03, 0, 0.15, 4, 1, false ), matLineYellowTransparent ), [ 1.17, 0, 0 ], [ 0, 0, -Math.PI / 2 ], [ 1, 1, 0.001 ]],
-			// [ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.03, 0, 0.15, 4, 1, false ), matLineYellowTransparent ), [ -1.17, 0, 0 ], [ 0, 0, Math.PI / 2 ], [ 1, 1, 0.001 ]],
-			// [ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.03, 0, 0.15, 4, 1, false ), matLineYellowTransparent ), [ 0, -1.17, 0 ], [ Math.PI, 0, 0 ], [ 1, 1, 0.001 ]],
-			// [ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.03, 0, 0.15, 4, 1, false ), matLineYellowTransparent ), [ 0, 1.17, 0 ], [ 0, 0, 0 ], [ 1, 1, 0.001 ]],
-		],
-		XYZE: [
-			// [ new THREE.Line( CircleGeometry( 1, 1 ), matLineGray ), null, [ 0, Math.PI / 2, 0 ] ]
-		]
+		Z: [],
+		E: [],
+		XYZE: []
 	};
 
 	var helperRotate = {
@@ -867,21 +857,13 @@ THREE.HorizialControllerGizmo = function () {
 	};
 
 	var pickerRotate = {
-		X: [
-			// [ new THREE.Mesh( new THREE.TorusBufferGeometry( 1, 0.1, 4, 24 ), matInvisible ), [ 0, 0, 0 ], [ 0, -Math.PI / 2, -Math.PI / 2 ] ],
-		],
+		X: [],
 		Y: [
 			[ new THREE.Mesh( new THREE.TorusBufferGeometry( 1, 0.1, 4, 24 ), matInvisible ), [ 0, 0, 0 ], [ Math.PI / 2, 0, 0 ] ],
 		],
-		Z: [
-			// [ new THREE.Mesh( new THREE.TorusBufferGeometry( 1, 0.1, 4, 24 ), matInvisible ), [ 0, 0, 0 ], [ 0, 0, -Math.PI / 2 ] ],
-		],
-		E: [
-			// [ new THREE.Mesh( new THREE.TorusBufferGeometry( 1.25, 0.1, 2, 24 ), matInvisible ) ]
-		],
-		XYZE: [
-			// [ new THREE.Mesh( new THREE.SphereBufferGeometry( 0.7, 10, 8 ), matInvisible ) ]
-		]
+		Z: [],
+		E: [],
+		XYZE: []
 	};
 
 	var gizmoScale = {
@@ -1035,10 +1017,6 @@ THREE.HorizialControllerGizmo = function () {
 	this.gizmo = {};
 	this.picker = {};	// 辅助用户进行拾取控制操作
 	this.helper = {};	// 辅助线
-
-	// ----
-	this.helperPlane = {}
-	// ----
 
 	this.add( this.gizmo[ "translate" ] = setupGizmo( gizmoTranslate ) );
 	this.add( this.gizmo[ "rotate" ] = setupGizmo( gizmoRotate ) );
@@ -1270,36 +1248,24 @@ THREE.HorizialControllerGizmo = function () {
 				if ( handle.name.search( 'X' ) !== -1 ) {
 					if ( alignVector.copy( unitX ).applyQuaternion( quaternion ).dot( this.eye ) < AXIS_FLIP_TRESHOLD ) {
 						if ( handle.tag === 'fwd' ) {
-							handle.visible = false;
+							handle.visible = true
 						} else {
 							handle.scale.x *= -1;
 						}
 					} else if ( handle.tag === 'bwd' ) {
-						handle.visible = false;
-					}
-				}
-
-				if ( handle.name.search( 'Y' ) !== -1 ) {
-					if ( alignVector.copy( unitY ).applyQuaternion( quaternion ).dot( this.eye ) < AXIS_FLIP_TRESHOLD ) {
-						if ( handle.tag === 'fwd' ) {
-							handle.visible = false;
-						} else {
-							handle.scale.y *= -1;
-						}
-					} else if ( handle.tag === 'bwd' ) {
-						handle.visible = false;
+						handle.visible = true;
 					}
 				}
 
 				if ( handle.name.search( 'Z' ) !== -1 ) {
 					if ( alignVector.copy( unitZ ).applyQuaternion( quaternion ).dot( this.eye ) < AXIS_FLIP_TRESHOLD ) {
 						if ( handle.tag === 'fwd' ) {
-							handle.visible = false;
+							// handle.visible = false;
 						} else {
 							handle.scale.z *= -1;
 						}
 					} else if ( handle.tag === 'bwd' ) {
-						handle.visible = false;
+						// handle.visible = false;
 					}
 				}
 
@@ -1343,6 +1309,7 @@ THREE.HorizialControllerGizmo = function () {
 			}
 
 			// Hide disabled axes
+			this.showX = true
 			handle.visible = handle.visible && ( handle.name.indexOf( "X" ) === -1 || this.showX );
 			handle.visible = handle.visible && ( handle.name.indexOf( "Y" ) === -1 || this.showY );
 			handle.visible = handle.visible && ( handle.name.indexOf( "Z" ) === -1 || this.showZ );
