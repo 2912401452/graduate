@@ -191,22 +191,37 @@
                         var point = cameraPositions.filter(item=>{
                             return item.index == (currentSelectedCamera.userData.index)
                         })[0]
-                       
-                        if(point.lastLine!==undefined){
-                            point.lastLine.visible = false
-                        }
-
-                        if(point.nextLine!==undefined){
-                            point.nextLine.visible = false
-                        }
-                        
                         var lastPoint = cameraPositions.filter(item=>{
                             return item.index == (currentSelectedCamera.userData.index)
                         })[0]
-
                         var nextPoint = cameraPositions.filter(item=>{
                             return item.index == (currentSelectedCamera.userData.index)
                         })[0]
+
+                        var newVertices = null
+                       
+                        if(point.lastLine!==undefined){
+                            // point.lastLine.visible = false
+                            newVertices = [
+                                new THREE.Vector3( currentSelectedCamera.position.x, currentSelectedCamera.position.y, currentSelectedCamera.position.z ),
+                                new THREE.Vector3( lastPoint.position.x, lastPoint.position.y, lastPoint.position.z )
+                            ]
+                            updateLine(point.lastLine, newVertices)
+                        }
+
+                        if(point.nextLine!==undefined){
+                            // point.nextLine.visible = false
+                            console.log(currentSelectedCamera.position)
+                            // console.log(point.position)
+                            newVertices = [
+                                new THREE.Vector3( currentSelectedCamera.position.x, currentSelectedCamera.position.y, currentSelectedCamera.position.z ),
+                                new THREE.Vector3( nextPoint.position.x, nextPoint.position.y, nextPoint.position.z )
+                            ]
+                            // console.log(newVertices)
+                            updateLine(point.nextLine, newVertices)
+                        }
+                        
+                        
                     }
                     domElement.onmouseup = function(ue){
                         domElement.onmousemove = null
@@ -236,6 +251,17 @@
             renderer.setSize(window.innerWidth,window.innerHeight)
         }
         
+    }
+
+    function updateLine(line, newVertices){
+        // line.geometry.vertices = newVertices
+        console.log(newVertices)
+        line.geometry.vertices.map((item,index)=>{
+            // console.log(item)
+            // item.y += 1
+            // item.y = 
+        })
+        line.geometry.verticesNeedUpdate = true
     }
 
     function changeMode(mode){
