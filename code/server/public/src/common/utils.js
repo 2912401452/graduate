@@ -20,3 +20,17 @@ function getParent(selectedMesh){
     }
     return selectedMesh;
 }
+
+/**
+ * 在加载模型的时候使用 自动调整模型的大小以确保模型大小比例与场景比例相适应 （根据高度来调整）
+ * @param {*} object        待调整的模型
+ * @param {*} sceneSize     该类型的模型在场景中应该有的尺寸    
+ */
+function autoAdjustScale(object, sceneSize){
+    var box3 = new THREE.Box3();
+    box3.setFromObject(object);
+    var oH = box3.max.y - box3.min.y;
+    var scale = sceneSize/oH;
+    object.scale.set(scale, scale, scale)
+    return object;
+}
