@@ -35,7 +35,22 @@ function autoAdjustScale(object, sceneSize){
     return object;
 }
 
+/**
+ * 在加载模型的时候使用 将地面模型自动调整至地面
+ * @param {*} object 
+ */
+function autoPutGround(object){
+    var box3 = new THREE.Box3();
+    box3.setFromObject(object);
+    var bottomY = box3.min.y;
+    object.position.y += (bottomY < 0 ? -bottomY : bottomY);
+}
 
+/**
+ * aabb 包围盒的碰撞检测
+ * @param {*} obj1 
+ * @param {*} obj2 
+ */
 function aabbCrashTest(obj1, obj2){
     var box3 =new THREE.Box3();
     var a = box3.setFromObject(obj1)

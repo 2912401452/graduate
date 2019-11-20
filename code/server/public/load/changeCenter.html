@@ -59,19 +59,21 @@
 	    scene.add( grid );
         scene.add( new THREE.BoxHelper( scene , new THREE.Color( 0xFF3030 ) ) )
 
-        var mtlLoader = new THREE.MTLLoader()
-        mtlLoader.setPath('../model/male02/')
-        mtlLoader.load('male02.mtl', function (material) {
-            var objLoader = new THREE.OBJLoader()
-            objLoader.setMaterials(material)
-            objLoader.setPath('../model/male02/')
-            objLoader.load('male02.obj', function (object) {
-                console.log(object)
-                autoAdjustScale(object, 17.5)
-                scene.add(object)
-            })
+        var objLoader = new THREE.OBJLoader()
+        objLoader.setPath('../model/')
+        objLoader.load('library.obj', function (object) {
+            console.log(object)
+            object.userData.place = 'ground'
+            autoAdjustScale(object, 10)
+            if(object.userData.place == 'ground'){
+                autoPutGround(object)
+            }
+            
+
+            scene.add(new THREE.BoxHelper(object, new THREE.Color('#0000ff')))
+            scene.add(object)
         })
-        
+
         document.getElementById('WebGL-output').appendChild(domElement)
         
         renderScene()

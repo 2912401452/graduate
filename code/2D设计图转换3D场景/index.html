@@ -7,11 +7,6 @@
     <title>Document</title>
     <script src="../src/three.js"></script>
     <script src="../src/controller/OrbitControls.js"></script>
-
-    <script src="../src/loaders/OBJLoader.js"></script>
-    <script src="../src/loaders/MTLLoader.js"></script>
-
-    <script src="../src/common/utils.js"></script>
     <style>
         body{
             margin: 0;
@@ -36,42 +31,17 @@
         renderer.shadowMap.enabled = true
         let domElement = renderer.domElement
 
-        var adult_man = 17.5
-
         var controller = new THREE.OrbitControls( camera, domElement )
-        camera.position.x = -50
-        camera.position.y = 50
-        camera.position.z = 50
+        camera.position.x = -30
+        camera.position.y = 40
+        camera.position.z = 30
         camera.lookAt(scene.position)
 
-        scene.add(new THREE.AmbientLight(0x444444))
-        var light = new THREE.PointLight(0xffffff)
-        light.position.set(1000,1000,1000)
-        var l2 = light.clone()
-        l2.position.set(-1000,-1000,-1000)
-        scene.add(light)
-        scene.add(l2)
+       
 
-        var axesHelper = new THREE.AxesHelper( 30 );
-        scene.add( axesHelper );  
-
-        var grid = new THREE.GridHelper( 60, 60, 0x444444, 0x888888 );
+        var grid = new THREE.GridHelper( 30, 30, 0x444444, 0x888888 );
 	    scene.add( grid );
-        scene.add( new THREE.BoxHelper( scene , new THREE.Color( 0xFF3030 ) ) )
 
-        var mtlLoader = new THREE.MTLLoader()
-        mtlLoader.setPath('../model/male02/')
-        mtlLoader.load('male02.mtl', function (material) {
-            var objLoader = new THREE.OBJLoader()
-            objLoader.setMaterials(material)
-            objLoader.setPath('../model/male02/')
-            objLoader.load('male02.obj', function (object) {
-                console.log(object)
-                autoAdjustScale(object, 17.5)
-                scene.add(object)
-            })
-        })
-        
         document.getElementById('WebGL-output').appendChild(domElement)
         
         renderScene()
