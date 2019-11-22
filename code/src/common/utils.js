@@ -59,3 +59,14 @@ function aabbCrashTest(obj1, obj2){
             (a.min.y <= b.max.y && a.max.y >= b.min.y) &&
             (a.min.z <= b.max.z && a.max.z >= b.min.z)
 }
+/**
+ * 获取模型的世界坐标
+ * @param {*} mesh 
+ */
+function getPointWorldPos (mesh) {
+    mesh.geometry.computeBoundingBox()
+    var centroid = new THREE.Vector3()
+    centroid.addVectors( mesh.geometry.boundingBox.min, mesh.geometry.boundingBox.max )
+    centroid.multiplyScalar( 0.5 )
+    return centroid.applyMatrix4( mesh.matrixWorld )
+}
