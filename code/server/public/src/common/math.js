@@ -10,3 +10,15 @@ function tranformMouseCoord(x2D, y2D, domElement){
     mouse.y = - ( y2D / domElement.clientHeight ) * 2 + 1;
     return mouse;
 }
+
+/**
+ * 
+ * @param {*} point { x: x, y: y }
+ * @param {*} rect  { max: { x: x, y: y }, min: { x: x, y: y } }
+ */
+function isPointInRect2D(point, rect) {
+    return  point.x > rect.min.x &&
+            point.x < rect.max.x &&
+            point.y > rect.min.y &&
+            point.y < rect.max.y
+}
