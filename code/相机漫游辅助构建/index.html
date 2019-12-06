@@ -108,7 +108,7 @@
 
         controller = new THREE.OrbitControls( camera, domElement )
         transformControls = new THREE.TransformControls(camera, domElement)
-        // canBeSelectedMeshes.push(transformControls)
+      
         scene.add(transformControls)
         camera.position.x = -30
         camera.position.y = 40
@@ -137,13 +137,13 @@
             
             item.camera.lookAt(item.target.x, item.target.y, item.target.z)
             scene.add(item.camera)
-            // var helper = new THREE.CameraHelper( item.camera );
-            // scene.add(helper)
+            var helper = new THREE.CameraHelper( item.camera );
+            scene.add(helper)
 
             if(cameraPositions.length <= 1){ // 只有一个点
                 return
             }else if(item.nextIndex > 0){ // 不是最后一个点
-                console.log(1)
+               
                 geometry = geometry.clone()
                 geometry.vertices = []
                 geometry.vertices.push(
@@ -201,7 +201,6 @@
                         var newVertices = null
                        
                         if(point.lastLine!==undefined){
-                            // point.lastLine.visible = false
                             newVertices = [
                                 new THREE.Vector3( currentSelectedCamera.position.x, currentSelectedCamera.position.y, currentSelectedCamera.position.z ),
                                 new THREE.Vector3( lastPoint.position.x, lastPoint.position.y, lastPoint.position.z )
@@ -210,14 +209,12 @@
                         }
 
                         if(point.nextLine!==undefined){
-                            // point.nextLine.visible = false
-                            console.log(currentSelectedCamera.position)
-                            // console.log(point.position)
+                          
                             newVertices = [
                                 new THREE.Vector3( currentSelectedCamera.position.x, currentSelectedCamera.position.y, currentSelectedCamera.position.z ),
                                 new THREE.Vector3( nextPoint.position.x, nextPoint.position.y, nextPoint.position.z )
                             ]
-                            // console.log(newVertices)
+                            
                             updateLine(point.nextLine, newVertices)
                         }
                         
@@ -239,8 +236,6 @@
         
         renderScene()
         function renderScene(){
-            // camera2.position.x += 0.05
-            // camera2.rotation.y += 0.01
             renderer.render(scene,camera)
             requestAnimationFrame(renderScene)
         }
@@ -254,13 +249,11 @@
     }
 
     function updateLine(line, newVertices){
-        // line.geometry.vertices = newVertices
-        console.log(newVertices)
-        line.geometry.vertices.map((item,index)=>{
-            // console.log(item)
-            // item.y += 1
-            // item.y = 
-        })
+        for(var i = 0;i < newVertices.length;i++) {
+            line.geometry.vertices[i].x = newVertices[i].x
+            line.geometry.vertices[i].y = newVertices[i].y
+            line.geometry.vertices[i].z = newVertices[i].z
+        }
         line.geometry.verticesNeedUpdate = true
     }
 

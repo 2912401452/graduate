@@ -5,9 +5,10 @@
  * @param {*} domElement 
  */
 function tranformMouseCoord(x2D, y2D, domElement){
+    let { left, top, width, height } = domElement.getBoundingClientRect()
     var mouse = new THREE.Vector2();
-    mouse.x = ( x2D / domElement.clientWidth ) * 2 - 1;
-    mouse.y = - ( y2D / domElement.clientHeight ) * 2 + 1;
+    mouse.x = ((x2D -left) / width) * 2 - 1;
+    mouse.y = -((y2D - top) / height) * 2 + 1;
     return mouse;
 }
 
