@@ -52,6 +52,8 @@
         var isMultiply = false
         var normalMaterial = new THREE.MeshNormalMaterial()
         var basicMaterial = new THREE.MeshBasicMaterial({color: 'red'})
+        var axesHelper = new THREE.AxesHelper( 5 );
+        scene.add( axesHelper );
 
         var grid = new THREE.GridHelper( 30, 30, 0x444444, 0x888888 );
 	    scene.add( grid );

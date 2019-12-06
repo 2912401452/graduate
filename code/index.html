@@ -40,7 +40,9 @@
        
 
         var grid = new THREE.GridHelper( 30, 30, 0x444444, 0x888888 );
-	    scene.add( grid );
+        scene.add( grid );
+        var axesHelper = new THREE.AxesHelper( 5 );
+scene.add( axesHelper );
 
         document.getElementById('WebGL-output').appendChild(domElement)
         
