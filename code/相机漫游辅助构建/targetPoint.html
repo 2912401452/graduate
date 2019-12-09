@@ -9,7 +9,7 @@
     <script src="../src/three.js"></script>
     <script src="../src/controller/OrbitControls.js"></script>
     <script src="../src/libs/CameraHelper.js"></script>
-    <script src="../src/controller/TransformControls.js"></script>
+    <script src="./TransformControls.js"></script>
 
     <script src="../src/common/math.js"></script>
     <script src="../src/common/utils.js"></script>
@@ -34,7 +34,7 @@
             top: 0;
             left: 0;
             width: 300px;
-            height: 150px;
+            height: 200px;
             margin: 10px;
             border: 1px solid;
             z-index: -1;
@@ -90,8 +90,8 @@
         controller = new THREE.OrbitControls( camera, domElement )
 
         transformControls = new THREE.TransformControls(camera, domElement)
-       
         scene.add(transformControls)
+
         camera.position.x = -50
         camera.position.y = 50
         camera.position.z = 50
@@ -99,18 +99,11 @@
 
         scene.add(new THREE.Mesh(new THREE.SphereBufferGeometry(2.5, 16, 16), normalMaterial))
 
-       
         var sphere = generatePoint(1, new THREE.Vector3(15, 15, 15), new THREE.Vector3(3, 3, 3))
         // init subCamera
         subCamera = sphere.userData.camera
-
-      
         generatePoint(2, new THREE.Vector3(-15, 15, -15), new THREE.Vector3(-3, 3, -3))
-
-
         generatePoint(3, new THREE.Vector3(15, 15, -15), new THREE.Vector3(3, 3, -3))
-
- 
         generatePoint(4, new THREE.Vector3(15, -15, -15), new THREE.Vector3(3, -3, -3))
 
         let line = null, currentPoint = null, nextPoint = null
@@ -133,7 +126,6 @@
             
         }
 
-
         domElement.onmousedown = function(e){
             
             let coords = tranformMouseCoord(e.clientX, e.clientY, domElement)
@@ -144,10 +136,7 @@
                 let selectedCameraPoint = item.userData.pointType == 'camera'?item:item.userData.parent // 当前选中相机点位
                 let selectedSubCamera = selectedCameraPoint.userData.camera // 当前相机点位的子相机
                 let selectedHelper = selectedCameraPoint.userData.helper
-                if(item.userData.pointType == 'target') {
-                    console.log(item.userData)
-                    return
-                }
+              
                 if(currentCameraPoint == null){ // 之前未选中相机点位
                     
                     currentCameraPoint = selectedCameraPoint // 赋值当前选中相机点位
@@ -211,7 +200,6 @@
             
         }
 
-       
         var grid = new THREE.GridHelper( 50, 50, 0x444444, 0x888888 );
         scene.add( grid );
         
@@ -230,14 +218,9 @@
         }
     }
 
-    function cameraPointMove(point) {
-        moveLines(point)
-        moveTargetLine(point)
-        if(mode == 'translate') {
-            updateCameraAndHelper(point)
-        }
-        
-    }
+  
+
+
 
     function generatePoint(index, position, target = new THREE.Vector3(0, 0, 0)) {
         let sphere = commonSphere.clone()
@@ -298,34 +281,65 @@
         subRender.setSize(subView.clientWidth,subView.clientHeight)
         subView.appendChild(subRender.domElement)
         subController = new THREE.OrbitControls( subCamera, subRender.domElement )
-        
+        subController.enableZoom = false    // subView 的控制器关闭变焦功能
+        subController.enablePan = false     // subView 的控制器关闭右键拖动功能
         renderSubRender()
-        subRender.domElement.onmousedown = function() {
-            
-            if(currentCameraPoint == null) return
-            let currentShpere = currentCameraPoint
-            subController.object = subCamera
-            
-            let posCopyControl = null
-            copyPosition()
-            
-            subRender.domElement.onmouseup = function() {
-                cancelAnimationFrame(posCopyControl)
-                posCopyControl = null
-            }
-            function copyPosition() {
-                moveLines(currentShpere)
-                moveTargetLine(currentShpere)
-                currentShpere.position.copy(subCamera.position)
-                currentShpere.rotation.copy(subCamera.rotation)
-                posCopyControl = requestAnimationFrame(copyPosition)
-            }
+
+        subRender.domElement.onmousedown = subViewMousemove // 定义用户在subView框中进行拖动操作的动作
+        
+    }
+
+    function subViewMousemove() {
+        if(currentCameraPoint == null) return // 
+        subController.object = subCamera // 每一次用户在拖动相机的时候都会根据当前选中的相机点位切换控制器控制的相机
+        subController.target.copy(currentCameraPoint.userData.targetPoint.position) // 同时切换控制器的旋转中心
+        let posCopyControl = null // 定义在拖动期间的更新的控制器
+        let helperTargetBall = new THREE.Mesh(new THREE.SphereBufferGeometry(1,12,12), new THREE.MeshBasicMaterial({color: 0x00ff00}))
+        // helperTargetBall.position.copy(currentCameraPoint.userData.targetPoint.position.sub(currentCameraPoint.position))
+        // currentCameraPoint.add(helperTargetBall)
+        
+        subRender.domElement.onmouseup = function() {
+            cancelAnimationFrame(posCopyControl)
+            posCopyControl = null
+            // helperTargetBall.geometry.dispose()
+            // helperTargetBall.material.dispose()
+            // currentCameraPoint.remove(helperTargetBall)
         }
+
+        updateStates()
+        function updateStates() {
+            cameraPointMove(currentCameraPoint, helperTargetBall)
+            currentCameraPoint.position.copy(subCamera.position)
+            currentCameraPoint.rotation.copy(subCamera.rotation)
+            posCopyControl = requestAnimationFrame(updateStates)
+        }
+    }
+
+    function cameraPointMove(point, helperTargetBall) {
+        moveLines(point)
+        moveTargetLine(point)
+        moveTargerPoint(point, helperTargetBall)
+        if(mode == 'translate') {
+            updateCameraAndHelper(point)
+        }
+        
+    }
+
+    function moveTargerPoint(point, helperTargetBall) {
+
+        let targetPoint = point.userData.targetPoint
+        // targetPoint.applyMatrix(point.matrix)
+        // targetPoint.matrix.multiply(point.matrixWorld)
+        // targetPoint.rotation.setFromRotationMatrix(targetPoint.matrix)
+        // console.log(targetPoint.position)
+        // console.log(point.position)
+        // targetPoint.rotation.copy(point.rotation)
+        // console.log(point.rotation)
     }
 
     function moveLines(movePoint) { // 更新线段，使之跟随小球一起移动
         if(movePoint.userData.lastLine !== null){
-                        
+            
             let p1 = new THREE.Vector3().copy(movePoint.userData.lastPoint.position)
             let p2 = new THREE.Vector3().copy(movePoint.position)
             updateLine(movePoint.userData.lastLine, [p1, p2])
